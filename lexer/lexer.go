@@ -31,6 +31,13 @@ func (l *lexer) readChar() {
 	l.readPositon += 1
 }
 
+func (l *lexer) peekChar() byte {
+	if l.readPositon >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPositon]
+	}
+}
 func (l *lexer) readIdentifier() string {
 	position := l.position
 	for isLetter(l.ch) {
@@ -59,15 +66,28 @@ func (l *lexer) NextToken() token.Token {
 	var tok token.Token
 	l.skipWhitespace()
 	fmt.Printf("work on char %q\n", l.ch)
+	fmt.Print('=' + '!')
 	switch l.ch {
 	case '=':
-		tok = token.NewToken(token.ASSIGN, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = token.NewToken(token.ASSIGN, l.ch)
+		}
+	case '!':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.EOF, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = token.NewToken(token.BANG, l.ch)
+		}
 	case '+':
 		tok = token.NewToken(token.PLUS, l.ch)
 	case '-':
 		tok = token.NewToken(token.MINUS, l.ch)
-	case '!':
-		tok = token.NewToken(token.BANG, l.ch)
 	case '/':
 		tok = token.NewToken(token.SLASH, l.ch)
 	case '*':
