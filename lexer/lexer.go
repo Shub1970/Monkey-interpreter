@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"monkey/token"
 )
 
@@ -65,8 +64,6 @@ func (l *lexer) skipWhitespace() {
 func (l *lexer) NextToken() token.Token {
 	var tok token.Token
 	l.skipWhitespace()
-	fmt.Printf("work on char %q\n", l.ch)
-	fmt.Print('=' + '!')
 	switch l.ch {
 	case '=':
 		if l.peekChar() == '=' {
